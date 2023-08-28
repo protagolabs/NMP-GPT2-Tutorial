@@ -9,9 +9,6 @@ Original file is located at
 ## Introduction:
 
 
-TODO:
-
-
 ## Some infomation about this task:
 
 About the task which we will show here is story generation.
@@ -25,23 +22,25 @@ Before run this notebook, please ensure that these packages you have already ins
 Python version: 3.8
 
 Packages:
-numpy pandas torch torchvision torch-optimizer tqdm matplotlib sentencepiece tensorboard
+numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
 
-Install Netmind-Mixin-Runtime:
+**If not**, please run these codes to install all the package whcih we need. And if you have more packages whcih you want to usem. Please add them in the requirements.txt. When you upload the project, please upload the requirements.txt which you modified.
+
+> Install Netmind-Mixin-Runtime:
 ```bash
-pip install numpy pandas torch torchvision torch-optimizer tqdm matplotlib sentencepiece tensorboard
-git clone https://github.com/protagolabs/NetMind-Mixin-Runtime.git
-cd NetMind-Mixin-Runtime && pip install ./
-pip install accelerate -U
+!git clone https://github.com/protagolabs/NMP-GPT2-Tutorial.git
+!pip install -r NMP-GPT2-Tutorial/requirements.txt
+!pip install git+https://github.com/protagolabs/NetMind-Mixin-Runtime@py310
 ```
 """
 
-# Install all the package which we need, if we want to run this in the Power-codelab
+# !git clone https://github.com/protagolabs/NMP-GPT2-Tutorial.git
+# !pip install -r NMP-GPT2-Tutorial/requirements.txt
+# !pip install git+https://github.com/protagolabs/NetMind-Mixin-Runtime@py310
+
 """## Not-Netmid-Part
 
 ### Step 1: Load the model and tokenizer
-
-
 """
 
 from transformers import GPT2Tokenizer, AutoModelForCausalLM
@@ -57,7 +56,7 @@ model = AutoModelForCausalLM.from_pretrained("gpt2")
 from datasets import load_dataset
 from torch.utils.data import DataLoader
 
-# Import the dataset, which is a demo for some D&D stories.
+# Import the dataset, which is a demo for some stories.
 stories = load_dataset("KATANABRAVE/stories")
 
 train_data = stories["train"]
@@ -73,24 +72,65 @@ train_dataloader = DataLoader(train_data, batch_size=4, shuffle=False)
 import torch
 from tqdm import tqdm
 import transformers
+import argparse
+import os
 from transformers import TrainingArguments, Trainer
 from torch.nn.utils import clip_grad_norm_
 from transformers import get_linear_schedule_with_warmup
 
-training_args = TrainingArguments(
-        evaluation_strategy = "epoch",
-        learning_rate=2e-4,
-        max_steps = 1000,
-        save_steps = 100,
-        weight_decay=0.01,
-        per_device_train_batch_size=4,
-        do_eval = False,
-        do_train = True,
-        num_train_epochs = 5,
-        output_dir = "./test"
-    )
 
-"""### Step 4: Define the customer trainer, note that we need insert step_callback for monitoring training loss."""
+def setup_args():
+    """
+    设置训练参数
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_name_or_path', default= 't5-small' , type=str, required=False, help='')
+    parser.add_argument('--per_device_train_batch_size', default= 4 , type=int, required=False, help='')
+    parser.add_argument('--learning_rate', default= 0.002 , type=float, required=False, help='')
+    parser.add_argument('--num_train_epochs', default= 10000 , type=int, required=False, help='')
+
+    # adv
+    parser.add_argument("--weight_decay", default=0.01, type=float)
+    parser.add_argument("--max_grad_norm", default=1, type=float)
+    parser.add_argument("--warmup_steps", default=5000, type=float)
+    parser.add_argument('--output_dir', default= 'model_1' , type=str, required=False, help='')
+    parser.add_argument('--save_steps', default=5000, type=int, required=False, help='')
+    parser.add_argument('--max_steps', default=1000, type=int, required=False, help='')
+
+    # distributed learning
+    parser.add_argument("--local_rank",
+                        type=int,
+                        default=os.getenv('LOCAL_RANK', 0),
+                        help="Local rank. Necessary for using the torch.distributed.launch utility")
+
+    return parser.parse_known_args()[0]
+
+
+training_args = setup_args()
+
+"""### Step 4: Define the optimizer"""
+
+"""
+USER MODIFY: The optimize should suit the model. And use the NetmindOptimizer
+"""
+from transformers import AdamW
+from transformers import get_linear_schedule_with_warmup
+# setup optimizer...
+model.train()
+
+param_optimizer = list(model.named_parameters())
+no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+optimizer_grouped_parameters = [
+    {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': training_args.weight_decay},
+    {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}]
+optimizer = AdamW(optimizer_grouped_parameters, lr=training_args.learning_rate)
+
+schedule_total = training_args.max_steps
+
+"""### Step 5: Define the customer trainer
+
+Note that we need insert step_callback for monitoring training loss.
+"""
 
 def train(dataset, training_args, model, optimizer, scheduler, step_callback):
 
@@ -151,6 +191,9 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
 
     # Just for nividia-smi visiable memory release
     torch.cuda.empty_cache()
+# TODO: 用这个
+
+"""### Step 6: Set the GPU"""
 
 import torch
 
@@ -159,7 +202,7 @@ model.to(device)
 
 """## Netmind-Part
 
-### Step 5: Initialize the Netmind nmp
+### Step 7: Initialize the Netmind nmp
 
 The Enviroments' parameters mush be set before import nmp
 
@@ -169,15 +212,28 @@ The Enviroments' parameters mush be set before import nmp
 Initialize the data of the "Mixin" library. This function should be placed before the actual start of training, and  before other "Mixin" API calls
 """
 
+import os
+os.environ["PLATFORM"] = os.getenv("PLATFORM", "pytorch")
+os.environ["MASTER_ADDR"] = os.getenv("MASTER_ADDR", "127.0.0.1")
+os.environ["MASTER_PORT"] = os.getenv("MASTER_PORT", "8000")
+os.environ["WORLD_SIZE"] = os.getenv("WORLD_SIZE", "1")
+os.environ["RANK"] = os.getenv("RANK", "0")
+
 from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
 
 nmp.init(load_checkpoint=False, use_ddp=True)
 
-"""### Step 6: Set the model to NetmindDistributedModel
+"""### Step 8: Set the model to NetmindDistributedModel
 
+#### NetmindDistributedModel(model)
 - model: Model variable.
   
 Wrap machine learning model with "NetmindDistributedModel". This will not change the ML model itself. It can be placed anywhere after the "model" is defined and before the actual start of training.
+
+#### NetmindOptimizer(optimizer)
+- optimizer: optimizer variable.
+
+Wrap machine learning model optimizer with "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
 """
 
 """
@@ -187,40 +243,24 @@ do not use the ddp
 ddp_model = NetmindDistributedModel(
     torch.nn.parallel.DistributedDataParallel(model, device_ids=[training_args.local_rank], output_device=training_args.local_rank))
 
-"""### Step 7: Define the optimizer, and set it be the NetmindOptimizer
-
-- optimizer: optimizer variable.
-
-Wrap machine learning model optimizer with "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
-"""
-
-"""
-USER MODIFY: The optimize should suit the model. And use the NetmindOptimizer
-"""
-from transformers import AdamW
-from transformers import get_linear_schedule_with_warmup
-# setup optimizer...
-model.train()
-
-param_optimizer = list(model.named_parameters())
-no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-optimizer_grouped_parameters = [
-    {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': training_args.weight_decay},
-    {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}]
-optimizer = AdamW(optimizer_grouped_parameters, lr=training_args.learning_rate)
 optimizer = NetmindOptimizer(optimizer)
-schedule_total = training_args.max_steps
 
 scheduler = get_linear_schedule_with_warmup(
     optimizer, num_warmup_steps=training_args.warmup_steps, num_training_steps=schedule_total
 )
 
-"""### Setp 8: Start Training"""
+"""### Setp 9: Start Training"""
 
 """
 USER MODIFY: set the process bar. And start the train.
 """
 
-nmp.init_train_bar(total_epoch=training_args.num_train_epochs, step_per_epoch=len(stories["train"]))
+nmp.init_train_bar(max_steps=training_args.max_steps)
 train(train_dataloader, training_args, model, optimizer, scheduler, nmp.step)
 nmp.finish_training() # Finish the training. It should be placed at the end of file
+
+"""### Step 10: Save Model
+
+If you want to save the model, please add some function here to save the model which you want to get.
+"""
+
