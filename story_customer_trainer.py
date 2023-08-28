@@ -33,10 +33,10 @@ numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matp
 !pip install git+https://github.com/protagolabs/NetMind-Mixin-Runtime@py310
 ```
 """
-
-# !git clone https://github.com/protagolabs/NMP-GPT2-Tutorial.git
-# !pip install -r NMP-GPT2-Tutorial/requirements.txt
-# !pip install git+https://github.com/protagolabs/NetMind-Mixin-Runtime@py310
+import os
+# os.system("git clone https://github.com/protagolabs/NMP-GPT2-Tutorial.git")
+# os.system("pip install -r NMP-GPT2-Tutorial/requirements.txt")
+# os.system("pip install git+https://github.com/protagolabs/NetMind-Mixin-Runtime@py310")
 
 """## Not-Netmid-Part
 

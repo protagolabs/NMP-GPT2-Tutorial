@@ -10,4 +10,8 @@ You can try them in the Colab, but remember when you want to upload the `.py` an
 > `!pip install ...`
 > `!git clone ...`
 
+## Files
 
+1. `stroy_customer_trainer.py`: This file, we define teh train() function to do the training.
+2. `story_hf_trainer_ddp.py`:  We use the `transformers`'s `Trainer` to do the training.
+3. `story_hf_trainer_model_parallel.py`: We use the `transformers`'s `Trainer` and model parallel.
