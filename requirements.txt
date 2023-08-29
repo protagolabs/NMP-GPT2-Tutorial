@@ -4,11 +4,11 @@ torch
 torchvision
 torch-optimizer
 tqdm
-accelerate
-transformers
+accelerate==0.22.0
+transformers==4.32.1
 matplotlib
-datasets
-huggingface-hub
+datasets==2.14.4
+huggingface-hub==0.16.4
 sentencepiece
 argparse
 tensorboard
