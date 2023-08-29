@@ -14,8 +14,6 @@ About the task which we will show here is story generation.
 
 Before run this notebook, please ensure that these packages you have already installed.
 
-Python version: 3.8
-
 Packages:
 numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
 
