@@ -25,20 +25,19 @@ numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matp
 **If not**, please run these codes to install all the package whcih we need. And if you have more packages whcih you want to usem. Please add them in the requirements.txt. When you upload the project, please upload the requirements.txt which you modified.
 
 """
-### Step 1: Load the model and tokenizer
 
+import os
+import torch
+import argparse
+from tqdm import tqdm
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 from datasets import load_dataset
 from torch.utils.data import DataLoader
-import torch
-from tqdm import tqdm
-import transformers
-import argparse
-import os
-from transformers import TrainingArguments, Trainer
 from torch.nn.utils import clip_grad_norm_
-from transformers import get_linear_schedule_with_warmup
+from transformers import get_linear_schedule_with_warmup, AdamW
 from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
+
+### Step 1: Load the model and tokenizer
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -95,8 +94,6 @@ training_args = setup_args()
 NOTE: The optimizer should suit the model you are using. You should then wrap it within the NetmindOptimizer class as shown below
 optimizer = NetmindOptimizer(optimizer)
 """
-from transformers import AdamW
-from transformers import get_linear_schedule_with_warmup
 
 param_optimizer = list(model.named_parameters())
 no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -175,8 +172,6 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
 # TODO: 用这个
 
 ### Step 6: Set the GPU
-
-import torch
 
 device = torch.device("cuda:{}".format(training_args.local_rank))
 model.to(device)

@@ -24,40 +24,29 @@ numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matp
 
 **If not**, please run these codes to install all the package whcih we need. And if you have more packages whcih you want to usem. Please add them in the requirements.txt. When you upload the project, please upload the requirements.txt which you modified.
 """
-
-"""## Not-Netmid-Part
+import os
+import transformers
+from transformers import TrainingArguments, GPT2Tokenizer, AutoModelForCausalLM
+from transformers import get_linear_schedule_with_warmup, AdamW, Trainer
+from datasets import load_dataset
+from transformers import DataCollator
+from NetmindMixins.Netmind import nmp, NetmindTrainerCallback
 
 ### Step 1: Load the model and tokenizer
-"""
 
-from transformers import GPT2Tokenizer, AutoModelForCausalLM
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 model = AutoModelForCausalLM.from_pretrained("gpt2")
 model.train()
 
-"""### Step 2: Prepare the dataset.
-
-"""
-
-from datasets import load_dataset
-from transformers import DataCollator
-
-
+### Step 2: Prepare the dataset
 # Import the dataset, which is a demo for some D&D stories.
 dataset = load_dataset("KATANABRAVE/stories")
 
-"""### Step 3: Define the TrainingArguments
-
-"""
-
-# HuggingFace Trainer
-import transformers
-from transformers import TrainingArguments
+### Step 3: Define the TrainingArguments
 
 # Here we want to close the wandb, if we use the huggingface's tranier. Our Platform would allow you to add wandb later.
-import os
 os.system("wandb offline")
 
 training_args = TrainingArguments(
@@ -80,9 +69,7 @@ training_args = TrainingArguments(
     report_to="none",
 )
 
-"""### Step 4: Define the optimizer and scheduler."""
-
-from transformers import get_linear_schedule_with_warmup, AdamW
+### Step 4: Define the optimizer and scheduler.
 
 param_optimizer = list(model.named_parameters())
 no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -97,22 +84,11 @@ scheduler = get_linear_schedule_with_warmup(
     optimizer, num_warmup_steps=training_args.warmup_steps, num_training_steps=schedule_total
 )
 
-
-"""## Netmid-Part
-
 ### Step 5: Initialize the Netmind nmp
-"""
-from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
 
 nmp.init(use_ddp=True)
 
-"""### Step 6: Define the NetmindTrainerCallback
-
-We will use it in the trainer initialize
-"""
-
-import transformers
-from NetmindMixins.Netmind import NetmindTrainerCallback
+### Step 6: Define the NetmindTrainerCallback. We will use it in the trainer initialization
 
 class CustomTrainerCallback(NetmindTrainerCallback):
     def __init__(self):
@@ -137,9 +113,7 @@ class CustomTrainerCallback(NetmindTrainerCallback):
         return super().on_evaluate(args, state, control, **kwargs)
 
 
-"""### Setp 7: Start Training"""
-
-from transformers import Trainer
+### Setp 7: Start Training
 
 nmp.init_train_bar(max_steps=training_args.max_steps)
 
@@ -158,4 +132,3 @@ trainer.remove_callback(transformers.trainer_callback.ProgressCallback)
 trainer.train()
 
 nmp.finish_training() # Finish the training. It should be placed at the end of file
-
