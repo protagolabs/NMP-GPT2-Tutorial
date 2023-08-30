@@ -25,25 +25,27 @@ numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matp
 **If not**, please run these codes to install all the package whcih we need. And if you have more packages whcih you want to usem. Please add them in the requirements.txt. When you upload the project, please upload the requirements.txt which you modified.
 
 """
-
-"""## Not-Netmid-Part
-
 ### Step 1: Load the model and tokenizer
-"""
 
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from datasets import load_dataset
+from torch.utils.data import DataLoader
+import torch
+from tqdm import tqdm
+import transformers
+import argparse
+import os
+from transformers import TrainingArguments, Trainer
+from torch.nn.utils import clip_grad_norm_
+from transformers import get_linear_schedule_with_warmup
+from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-model = GPT2LMHeadModel.from_pretrained("gpt2",device_map='balanced')
+model = GPT2LMHeadModel.from_pretrained("gpt2")
 model.train()
 
-"""### Step 2: Prepare the dataset.
-
-"""
-
-from datasets import load_dataset
-from torch.utils.data import DataLoader
+### Step 2: Prepare the dataset.
 
 # Import the dataset, which is a demo for some stories.
 stories = load_dataset("KATANABRAVE/stories")
@@ -53,24 +55,12 @@ eval_data = stories["validation"]
 
 train_dataloader = DataLoader(train_data, batch_size=4, shuffle=False)
 
-"""### Step 3: Define the training parameters
-
-"""
+### Step 3: Define the training parameters
 
 # Custom Trainer
-import torch
-from tqdm import tqdm
-import transformers
-import argparse
-import os
-from transformers import TrainingArguments, Trainer
-from torch.nn.utils import clip_grad_norm_
-from transformers import get_linear_schedule_with_warmup
-
-
 def setup_args():
     """
-    设置训练参数
+    Set training parameters
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name_or_path', default= 'gpt2' , type=str, required=False, help='')
@@ -87,20 +77,23 @@ def setup_args():
     parser.add_argument('--max_steps', default=1000, type=int, required=False, help='')
 
     # distributed learning
-    parser.add_argument("--local_rank",
-                        type=int,
-                        default=os.getenv('LOCAL_RANK', 0),
-                        help="Local rank. Necessary for using the torch.distributed.launch utility")
+    parser.add_argument(
+        "--local_rank",
+        type=int,
+        default=os.getenv('LOCAL_RANK', 0),
+        help="Local rank. Necessary for using the torch.distributed.launch utility"
+    )
 
     return parser.parse_known_args()[0]
 
 
 training_args = setup_args()
 
-"""### Step 4: Define the optimizer"""
+### Step 4: Define the optimizer
 
 """
-USER MODIFY: The optimize should suit the model. And use the NetmindOptimizer
+NOTE: The optimizer should suit the model you are using. You should then wrap it within the NetmindOptimizer class as shown below
+optimizer = NetmindOptimizer(optimizer)
 """
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
@@ -114,8 +107,8 @@ optimizer = AdamW(optimizer_grouped_parameters, lr=training_args.learning_rate)
 
 schedule_total = training_args.max_steps
 
-"""### Step 5: Define the custom trainer
-
+### Step 5: Define the custom trainer
+"""
 Note that we need insert step_callback for monitoring training loss.
 """
 
@@ -144,9 +137,11 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
             attention_mask = attention_mask.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True)
 
-            outputs = model(input_ids=input_ids,
-                        attention_mask=attention_mask,
-                        labels=labels)
+            outputs = model(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                labels=labels
+            )
             loss = outputs.loss
             # We keep track of the loss at each epoch
 
@@ -179,19 +174,15 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
     torch.cuda.empty_cache()
 # TODO: 用这个
 
-"""### Step 6: Set the GPU"""
+### Step 6: Set the GPU
 
 import torch
 
 device = torch.device("cuda:{}".format(training_args.local_rank))
 model.to(device)
 
-"""## Netmind-Part
-
+### NetmindMixins usage
 ### Step 7: Initialize the Netmind nmp
-"""
-
-from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
 
 nmp.init(use_ddp=True)
 
@@ -200,18 +191,14 @@ nmp.init(use_ddp=True)
 #### NetmindDistributedModel(model)
 - model: Model variable.
   
-Wrap machine learning model with "NetmindDistributedModel". This will not change the ML model itself. It can be placed anywhere after the "model" is defined and before the actual start of training.
+Wrap the machine learning model within "NetmindDistributedModel". This will not change the ML model itself. It can be placed anywhere after the "model" is defined and before the actual start of training.
 
 #### NetmindOptimizer(optimizer)
 - optimizer: optimizer variable.
 
-Wrap machine learning model optimizer with "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
+Wrap the optimizer within "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
 """
 
-"""
-USER MODIFY: Can change the mode type.For example: just set `ddp_model = NetmindDistributedModel(mdoel)` which means
-do not use the ddp
-"""
 ddp_model = NetmindDistributedModel(
     torch.nn.parallel.DistributedDataParallel(model, device_ids=[training_args.local_rank], output_device=training_args.local_rank))
 
@@ -221,10 +208,10 @@ scheduler = get_linear_schedule_with_warmup(
     optimizer, num_warmup_steps=training_args.warmup_steps, num_training_steps=schedule_total
 )
 
-"""### Setp 9: Start Training"""
+### Setp 9: Start Training
 
 """
-USER MODIFY: set the process bar. And start the train.
+Set the process bar and start the training.
 """
 
 nmp.init_train_bar(max_steps=training_args.max_steps)
