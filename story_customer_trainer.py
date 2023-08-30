@@ -64,9 +64,7 @@ from transformers import get_linear_schedule_with_warmup
 
 
 def setup_args():
-    """
-    设置训练参数
-    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name_or_path', default= 'gpt2' , type=str, required=False, help='')
     parser.add_argument('--per_device_train_batch_size', default= 4 , type=int, required=False, help='')
