@@ -94,9 +94,6 @@ training_args = setup_args()
 
 """### Step 4: Define the optimizer"""
 
-"""
-USER MODIFY: The optimize should suit the model. And use the NetmindOptimizer
-"""
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
 
@@ -172,7 +169,6 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
 
     # Just for nividia-smi visiable memory release
     torch.cuda.empty_cache()
-# TODO: 用这个
 
 """### Step 6: Set the GPU"""
 
@@ -203,10 +199,6 @@ Wrap machine learning model with "NetmindDistributedModel". This will not change
 Wrap machine learning model optimizer with "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
 """
 
-"""
-USER MODIFY: Can change the mode type.For example: just set `ddp_model = NetmindDistributedModel(mdoel)` which means
-do not use the ddp
-"""
 ddp_model = NetmindDistributedModel(
     torch.nn.parallel.DistributedDataParallel(model, device_ids=[training_args.local_rank], output_device=training_args.local_rank))
 
@@ -218,9 +210,6 @@ scheduler = get_linear_schedule_with_warmup(
 
 """### Setp 9: Start Training"""
 
-"""
-USER MODIFY: set the process bar. And start the train.
-"""
 
 nmp.init_train_bar(max_steps=training_args.max_steps)
 train(train_dataloader, training_args, model, optimizer, scheduler, nmp.step)
