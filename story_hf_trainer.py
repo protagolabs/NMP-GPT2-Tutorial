@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 """story_hf_trainer.ipynb
 
-Copied from story_hf_trainer.ipynb with minor editing.
-
-Original file is located at
-    https://colab.research.google.com/drive/1tUD4457MkSZZKUpsGwuA1-mGTySIJ6rV
-
 ## Introduction:
 
 
