@@ -35,7 +35,7 @@ from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-model = GPT2LMHeadModel.from_pretrained("gpt2",device_map='balanced')
+model = GPT2LMHeadModel.from_pretrained("gpt2")
 model.train()
 
 """### Step 2: Prepare the dataset.
