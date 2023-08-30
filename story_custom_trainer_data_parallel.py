@@ -7,22 +7,18 @@ Original file is located at
     https://colab.research.google.com/drive/1r1WTCnvZ81du3b9WJy-1AkmFAtUOFm6J
 
 ## Introduction:
-
-
 ## Some infomation about this task:
 
-About the task which we will show here is story generation.
-
 1. Story generation: We will use the GPT-2 to train a model which can generate some stories.
-2. Dataset: In huggingface "KATANABRAVE/stories"
-3. [GPT model](https://huggingface.co/docs/transformers/v4.32.0/en/model_doc/gpt2#transformers.GPT2Model), we will use the model via huggingface.
+2. Dataset: We will use the "KATANABRAVE/stories" dataset from HuggingFace
+3. [GPT model](https://huggingface.co/docs/transformers/v4.32.0/en/model_doc/gpt2#transformers.GPT2Model), we will use the HuggingFace implementation
 
-Before run this notebook, please ensure that these packages you have already installed.
+Ensure you have install the correct libraries before running this code.
 
-Packages:
+Required packages:
 numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
-
-**If not**, please run these codes to install all the package whcih we need. And if you have more packages whcih you want to usem. Please add them in the requirements.txt. When you upload the project, please upload the requirements.txt which you modified.
+If your modified code includes other additional libraries, please add them to the requirements.txt file before uploading the project to the NetMind Power platform, 
+otherwise the platform environment may not build correctly.
 
 """
 
