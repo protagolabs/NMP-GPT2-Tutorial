@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""story_customer_trainer.ipynb
+"""story_custom_trainer.ipynb
 
-Copied from story_customer_trainer.ipynb with minor editing.
+Copied from story_custom_trainer.ipynb with minor editing.
 
 Original file is located at
     https://colab.research.google.com/drive/1r1WTCnvZ81du3b9WJy-1AkmFAtUOFm6J
@@ -57,7 +57,7 @@ train_dataloader = DataLoader(train_data, batch_size=4, shuffle=False)
 
 """
 
-# Customer Trainer
+# Custom Trainer
 import torch
 from tqdm import tqdm
 import transformers
@@ -114,7 +114,7 @@ optimizer = AdamW(optimizer_grouped_parameters, lr=training_args.learning_rate)
 
 schedule_total = training_args.max_steps
 
-"""### Step 5: Define the customer trainer
+"""### Step 5: Define the custom trainer
 
 Note that we need insert step_callback for monitoring training loss.
 """
