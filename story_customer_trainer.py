@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 """story_customer_trainer.ipynb
 
-Copied from story_customer_trainer.ipynb with minor editing.
-
-Original file is located at
-    https://colab.research.google.com/drive/1r1WTCnvZ81du3b9WJy-1AkmFAtUOFm6J
-
 ## Introduction:
 
 
