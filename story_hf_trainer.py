@@ -1,58 +1,51 @@
 # -*- coding: utf-8 -*-
 """story_hf_trainer.ipynb
 
-## Introduction:
-
-
 ## Some infomation about this task:
 
-About the task which we will show here is story generation.
-
 1. Story generation: We will use the GPT-2 to train a model which can generate some stories.
-2. Dataset: In huggingface "KATANABRAVE/stories"
-3. [GPT model](https://huggingface.co/docs/transformers/v4.32.0/en/model_doc/gpt2#transformers.GPT2Model), we will use the model via huggingface.
+2. Dataset: We will use the "KATANABRAVE/stories" dataset from HuggingFace
+3. [GPT model](https://huggingface.co/docs/transformers/v4.32.0/en/model_doc/gpt2#transformers.GPT2Model), we will use the HuggingFace implementation
 
-Before run this notebook, please ensure that these packages you have already installed.
+Ensure you have install the correct libraries before running this code.
 
-Packages:
+Required packages:
 numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
-
-**If not**, please run these codes to install all the package whcih we need. And if you have more packages whcih you want to usem. Please add them in the requirements.txt. When you upload the project, please upload the requirements.txt which you modified.
+If your modified code includes other additional libraries, please add them to the requirements.txt file before uploading the project to the NetMind Power platform, 
+otherwise the platform environment may not build correctly.
 """
+
+
+import os
+import transformers
+from transformers import TrainingArguments, GPT2Tokenizer, AutoModelForCausalLM
+from transformers import get_linear_schedule_with_warmup, AdamW, Trainer
+from datasets import load_dataset
+from transformers import DataCollator
+from NetmindMixins.Netmind import nmp, NetmindTrainerCallback
+
 
 """## Not-Netmid-Part
-
 ### Step 1: Load the model and tokenizer
 """
-
-from transformers import GPT2Tokenizer, AutoModelForCausalLM
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 model = AutoModelForCausalLM.from_pretrained("gpt2")
 model.train()
 
+
 """### Step 2: Prepare the dataset.
-
 """
-
-from datasets import load_dataset
-from transformers import DataCollator
-
 
 # Import the dataset, which is a demo for some D&D stories.
 dataset = load_dataset("KATANABRAVE/stories")
 
-"""### Step 3: Define the TrainingArguments
 
+"""### Step 3: Define the TrainingArguments
 """
 
-# HuggingFace Trainer
-import transformers
-from transformers import TrainingArguments
-
 # Here we want to close the wandb, if we use the huggingface's tranier. Our Platform would allow you to add wandb later.
-import os
 os.system("wandb offline")
 
 training_args = TrainingArguments(
@@ -75,9 +68,8 @@ training_args = TrainingArguments(
     report_to="none",
 )
 
-"""### Step 4: Define the optimizer and scheduler."""
 
-from transformers import get_linear_schedule_with_warmup, AdamW
+"""### Step 4: Define the optimizer and scheduler."""
 
 param_optimizer = list(model.named_parameters())
 no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -93,21 +85,17 @@ scheduler = get_linear_schedule_with_warmup(
 )
 
 
-"""## Netmid-Part
 
+"""## Netmid-Part
 ### Step 5: Initialize the Netmind nmp
 """
-from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
 
 nmp.init(use_ddp=True)
 
-"""### Step 6: Define the NetmindTrainerCallback
 
+"""### Step 6: Define the NetmindTrainerCallback
 We will use it in the trainer initialize
 """
-
-import transformers
-from NetmindMixins.Netmind import NetmindTrainerCallback
 
 class CustomTrainerCallback(NetmindTrainerCallback):
     def __init__(self):
@@ -132,9 +120,8 @@ class CustomTrainerCallback(NetmindTrainerCallback):
         return super().on_evaluate(args, state, control, **kwargs)
 
 
-"""### Setp 7: Start Training"""
-
-from transformers import Trainer
+"""### Setp 7: Start Training
+"""
 
 nmp.init_train_bar(max_steps=training_args.max_steps)
 
