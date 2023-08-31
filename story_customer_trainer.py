@@ -11,17 +11,15 @@ Ensure you have install the correct libraries before running this code.
 
 Required packages:
 numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
-If your modified code includes other additional libraries, please add them to the requirements.txt file before uploading the project to the NetMind Power platform, 
-otherwise the platform environment may not build correctly.
+If your modified code includes other additional libraries, please add them to the requirements.txt file before uploading 
+the project to the NetMind Power platform, otherwise the platform environment may not build correctly.
 """
 
 
 import torch
 from tqdm import tqdm
-import transformers
 import argparse
 import os
-from transformers import TrainingArguments, Trainer
 from torch.nn.utils import clip_grad_norm_
 from transformers import get_linear_schedule_with_warmup
 from transformers import AdamW
@@ -33,9 +31,7 @@ import torch
 from NetmindMixins.Netmind import nmp, NetmindOptimizer, NetmindDistributedModel
 
 
-"""## Not-Netmid-Part
-### Step 1: Load the model and tokenizer
-"""
+# Step 1: Load the model and tokenizer
 
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -43,10 +39,9 @@ model = GPT2LMHeadModel.from_pretrained("gpt2")
 model.train()
 
 
-"""### Step 2: Prepare the dataset.
-"""
-
+# Step 2: Prepare the dataset.
 # Import the dataset, which is a demo for some stories.
+
 stories = load_dataset("KATANABRAVE/stories")
 
 train_data = stories["train"]
@@ -54,11 +49,10 @@ eval_data = stories["validation"]
 
 train_dataloader = DataLoader(train_data, batch_size=4, shuffle=False)
 
-"""### Step 3: Define the training parameters
 
-"""
+# Step 3: Define the training parameters
+# Custom training loop
 
-# Customer Trainer
 def setup_args():
     """
     Set training parameters
@@ -78,10 +72,12 @@ def setup_args():
     parser.add_argument('--max_steps', default=1000, type=int, required=False, help='')
 
     # distributed learning
-    parser.add_argument("--local_rank",
-                        type=int,
-                        default=os.getenv('LOCAL_RANK', 0),
-                        help="Local rank. Necessary for using the torch.distributed.launch utility")
+    parser.add_argument(
+        "--local_rank",
+        type=int,
+        default=os.getenv('LOCAL_RANK', 0),
+        help="Local rank. Necessary for using the torch.distributed.launch utility"
+    )
 
     return parser.parse_known_args()[0]
 
@@ -89,8 +85,7 @@ def setup_args():
 training_args = setup_args()
 
 
-"""### Step 4: Define the optimizer"""
-
+# Step 4: Define the optimizer
 """
 NOTE: The optimizer should suit the model you are using. You should then wrap it within the NetmindOptimizer class as shown below
 optimizer = NetmindOptimizer(optimizer)
@@ -106,10 +101,8 @@ optimizer = AdamW(optimizer_grouped_parameters, lr=training_args.learning_rate)
 schedule_total = training_args.max_steps
 
 
-"""### Step 5: Define the customer trainer
-
-Note that we need insert step_callback for monitoring training loss.
-"""
+# Step 5: Define the customer trainer
+# Note that we need insert step_callback for monitoring training loss.
 
 def train(dataset, training_args, model, optimizer, scheduler, step_callback):
 
@@ -171,31 +164,30 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
     torch.cuda.empty_cache()
 
 
-"""### Step 6: Set the GPU
-"""
+# Step 6: Set the GPU
 
 device = torch.device("cuda:{}".format(training_args.local_rank))
 model.to(device)
 
 
-"""## NetmindMixins usage
-### Step 7: Initialize the Netmind nmp
-"""
+# Step 7: Initialize the Netmind nmp
 
 nmp.init(use_ddp=True)
 
 
-"""### Step 8: Set the model to NetmindDistributedModel
-
+# Step 8: Set the model to NetmindDistributedModel
+"""
 #### NetmindDistributedModel(model)
 - model: Model variable.
   
-Wrap the machine learning model within "NetmindDistributedModel". This will not change the ML model itself. It can be placed anywhere after the "model" is defined and before the actual start of training.
+Wrap the machine learning model within "NetmindDistributedModel". This will not change the ML model itself. 
+It can be placed anywhere after the "model" is defined and before the actual start of training.
 
 #### NetmindOptimizer(optimizer)
 - optimizer: optimizer variable.
 
-Wrap the optimizer within "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
+Wrap the optimizer within "NetmindOptimizer". This will not change the optimizer itself. 
+It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
 """
 ddp_model = NetmindDistributedModel(
     torch.nn.parallel.DistributedDataParallel(model, device_ids=[training_args.local_rank], output_device=training_args.local_rank))
@@ -207,9 +199,8 @@ scheduler = get_linear_schedule_with_warmup(
 )
 
 
-"""### Setp 9: Start Training
-Set the process bar and start the training.
-"""
+# Setp 9: Start Training
+# Set the process bar and start the training.
 
 nmp.init_train_bar(max_steps=training_args.max_steps)
 train(train_dataloader, training_args, model, optimizer, scheduler, nmp.step)
