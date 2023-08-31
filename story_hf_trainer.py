@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """story_hf_trainer.ipynb
 
-## Some infomation about this task:
+## Some information about this task:
 
 1. Story generation: We will use the GPT-2 to train a model which can generate some stories.
 2. Dataset: We will use the "KATANABRAVE/stories" dataset from HuggingFace
 3. [GPT model](https://huggingface.co/docs/transformers/v4.32.0/en/model_doc/gpt2#transformers.GPT2Model), we will use the HuggingFace implementation
 
-Ensure you have install the correct libraries before running this code.
+Ensure you have installed the correct libraries before running this code.
 
 Required packages:
 numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
@@ -46,8 +46,8 @@ os.system("wandb offline")
 
 training_args = TrainingArguments(
     f"saved_model",
-    seed = 32,
-    #evaluation_strategy="epoch",
+    seed=32,
+    # evaluation_strategy="epoch",
     learning_rate=2e-4,
     per_device_train_batch_size=4,
     per_device_eval_batch_size=16,
@@ -79,7 +79,6 @@ schedule_total = training_args.max_steps
 scheduler = get_linear_schedule_with_warmup(
     optimizer, num_warmup_steps=training_args.warmup_steps, num_training_steps=schedule_total
 )
-
 
 
 # Step 5: Initialize the Netmind nmp

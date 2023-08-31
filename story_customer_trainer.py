@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """story_customer_trainer.ipynb
 
-## Some infomation about this task:
+## Some information about this task:
 
 1. Story generation: We will use the GPT-2 to train a model which can generate some stories.
 2. Dataset: We will use the "KATANABRAVE/stories" dataset from HuggingFace
 3. [GPT model](https://huggingface.co/docs/transformers/v4.32.0/en/model_doc/gpt2#transformers.GPT2Model), we will use the HuggingFace implementation
 
-Ensure you have install the correct libraries before running this code.
+Ensure you have installed the correct libraries before running this code.
 
 Required packages:
 numpy pandas torch torchvision torch-optimizer tqdm accelerate transformers matplotlib datasets huggingface-hub sentencepiece argparse tensorboard
@@ -106,8 +106,6 @@ schedule_total = training_args.max_steps
 
 def train(dataset, training_args, model, optimizer, scheduler, step_callback):
 
-    schedule_total = training_args.max_steps
-
     train_data = dataset
 
     device = torch.device("cuda:{}".format(training_args.local_rank))
@@ -129,9 +127,9 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
             attention_mask = attention_mask.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True)
 
-            outputs = model(input_ids=input_ids,
-                        attention_mask=attention_mask,
-                        labels=labels)
+            outputs = model(
+                input_ids=input_ids, attention_mask=attention_mask, labels=labels
+            )
             loss = outputs.loss
             # We keep track of the loss at each epoch
 
@@ -145,7 +143,7 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
             scheduler.step()
             # average loss in one epoch
             loss2log = total_loss.item()/ (train_step+1)
-            lr2log  = scheduler.get_last_lr()[0]
+            lr2log = scheduler.get_last_lr()[0]
             progress_bar.set_postfix(loss=loss2log , lr=lr2log )
             progress_bar.update(1)
             completed_steps += 1
@@ -160,7 +158,7 @@ def train(dataset, training_args, model, optimizer, scheduler, step_callback):
             if completed_steps == training_args.max_steps:
                 return
 
-    # Just for nividia-smi visiable memory release
+    # Just for nvidia-smi visible memory release
     torch.cuda.empty_cache()
 
 
@@ -199,9 +197,9 @@ scheduler = get_linear_schedule_with_warmup(
 )
 
 
-# Setp 9: Start Training
+# Step 9: Start Training
 # Set the process bar and start the training.
 
 nmp.init_train_bar(max_steps=training_args.max_steps)
 train(train_dataloader, training_args, model, optimizer, scheduler, nmp.step)
-nmp.finish_training() # Finish the training. It should be placed at the end of file
+nmp.finish_training()  # Finish the training. It should be placed at the end of file
