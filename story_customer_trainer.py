@@ -61,7 +61,7 @@ train_dataloader = DataLoader(train_data, batch_size=4, shuffle=False)
 # Customer Trainer
 def setup_args():
     """
-    设置训练参数
+    Set training parameters
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name_or_path', default= 'gpt2' , type=str, required=False, help='')
@@ -178,7 +178,7 @@ device = torch.device("cuda:{}".format(training_args.local_rank))
 model.to(device)
 
 
-"""## Netmind-Part
+"""## NetmindMixins usage
 ### Step 7: Initialize the Netmind nmp
 """
 
@@ -196,9 +196,6 @@ Wrap the machine learning model within "NetmindDistributedModel". This will not 
 - optimizer: optimizer variable.
 
 Wrap the optimizer within "NetmindOptimizer". This will not change the optimizer itself. It can be placed anywhere after the "optimizer" is defined and before the actual start of training.
-
-USER MODIFY: User can change the mode type.For example: just set `ddp_model = NetmindDistributedModel(mdoel)` which means
-do not use the ddp
 """
 ddp_model = NetmindDistributedModel(
     torch.nn.parallel.DistributedDataParallel(model, device_ids=[training_args.local_rank], output_device=training_args.local_rank))
