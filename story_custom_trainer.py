@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""story_customer_trainer.ipynb
+"""story_custom_trainer.ipynb
 
 ## Some information about this task:
 
@@ -101,7 +101,7 @@ optimizer = AdamW(optimizer_grouped_parameters, lr=training_args.learning_rate)
 schedule_total = training_args.max_steps
 
 
-# Step 5: Define the customer trainer
+# Step 5: Define the custom trainer
 # Note that we need insert step_callback for monitoring training loss.
 
 def train(dataset, training_args, model, optimizer, scheduler, step_callback):

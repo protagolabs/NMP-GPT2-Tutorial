@@ -12,10 +12,10 @@ If you have any questions, or you are not able to apply these examples to your o
 
 ## Google Colab Links
 
-| Type | Python File Name | Colab |
-|:---:|:---:|:---:|
-|Custom Trainer| `story_customer_trainer.py` |[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1r1WTCnvZ81du3b9WJy-1AkmFAtUOFm6J?usp=sharing) |
-|HuggingFace Trainer| `story_hf_trainer.py` |[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rf-0AcbQTbrb0cIp0EKzjFIeKvxXx6hh?usp=sharing) |
+| Type |           Python File Name           | Colab |
+|:---:|:------------------------------------:|:---:|
+|Custom Trainer|      `story_custom_trainer.py`       |[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1r1WTCnvZ81du3b9WJy-1AkmFAtUOFm6J?usp=sharing) |
+|HuggingFace Trainer|        `story_hf_trainer.py`         |[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rf-0AcbQTbrb0cIp0EKzjFIeKvxXx6hh?usp=sharing) |
 |Model Parallel| `story_hf_trainer_model_parallel.py` |[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1VZFUlzIqd7lboJ1kGbTc3zqmo0zBB5pe?usp=sharing) |\
 
 
