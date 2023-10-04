@@ -1,15 +1,54 @@
-# Documentation
+# Documentation - Table of Content
+- [Documentation - Table of Content](#documentation---table-of-content)
+- [Getting Started](#getting-started)
+- [Add `NetmindMixins` to your Training Code](#add-netmindmixins-to-your-training-code)
+  - [Example 1: Implementing your own Training Loop with PyTorch](#example-1-implementing-your-own-training-loop-with-pytorch)
+    - [Uploading Datasets](#uploading-datasets)
+    - [Initialization](#initialization)
+    - [Model and Optimizer Instantiation](#model-and-optimizer-instantiation)
+    - [Training](#training)
+  - [Example 2: Using HuggingFace `Trainer` Class](#example-2-using-huggingface-trainer-class)
+    - [Uploading Datasets and Setting Training Arguments](#uploading-datasets-and-setting-training-arguments)
+    - [Initialization](#initialization-1)
+    - [Training](#training-1)
+- [Import a Training Job from Google Colab](#import-a-training-job-from-google-colab)
 
-Here we share some examples and general guidance for how to train machine learning models on our platform using the `NetmindMixins` library. `NetmindMixins` is a proprietary library developed by NetMind.AI in order to facilitate training of machine learning models across our distributed platform ecosystem, the NetMind Power platform. It is already pre-installed into all our environments, so you need not worry about installation. Please specify any other required library for your project in a `requirements.txt` file and add it to the root folder of your project structure. This will ensure any listed library is installed before running your code.  
+# Getting Started
+
+In order to create a training job on the Netmind Power platform, you need to [create an account](https://power.netmind.ai/sign/login) first. You can register with your Google or Microsoft account, or with any email address. After login, click on the icon on the top right of the screen and select "Console" from the dropdown menu (see image below).   
+<p align="center">
+<img src="images/console.png" alt="console" style="width:500px;"/>
+</p>
+
+You will be directed to your personal page. Select "Workspaces" from the dropdown on the left, and then select "create a new workspace", assign your workspace a name and press "Confirm". A workspace should now appear under your Workspaces. For example, a workspace named "test" will look like this. 
+<p align="center">
+<img src="images/test.png" alt="training_job" style="width:500px;"/>
+</p>
+Click on your workspace box and then click on "Create Training job", as shown below.
+<p align="center">
+<img src="images/training_job.png" alt="training_job" style="width:500px;"/>
+</p>
+You should then see the following page.  
+<p align="center">
+<img src="images/training_edit.png" alt="training_job" style="width:500px;"/>
+</p>
+
+Assign your training job a name and fill in the fields as required. You will need to upload your training code and data, if applicable. In order for your code to train successfully on our platform, you need to make some minor modifications to your codebase by adding the `NetmindMixins` library. The required modifications depend on whether you're implementing a custom training loop or using HuggingFace `Trainer` class. Details are given in the [section below](#add-netmindmixins-to-your-training-code).  
+
+We also support uploading a training job directly from Google Colab. For a step-by-step guide, see the section [Import a Training Job from Google Colab](#import-a-training-job-from-google-colab) at the end.
+
+# Add `NetmindMixins` to your Training Code
+
+Here we share some examples and general guidance for how to train machine learning models on our platform using the `NetmindMixins` library. `NetmindMixins` is a proprietary library developed by NetMind.AI in order to facilitate training of machine learning models across our distributed platform ecosystem, the NetMind Power platform. It is already pre-installed into all our environments, so you need not worry about installation. Please specify any other required library for your project in a `requirements.txt` file and add it to the root folder of your project structure. This will ensure any listed library is installed before running your code. If the file has a different name, it will not be recognized by our system. 
 Below are the instructions and general principles to follow in order to add our `NetmindMixins` framework to your existing training code. This is necessary in order to successfully run your code on our platform, as it allows us to monitor essential functions such as training progress, to estimate training time, to save checkpoint on cloud and bill accounts appropriately, and to distribute the workload across multiple machines. While detailed general instructions are shown below, if you want to see some specific examples of how they are implemented in practice, please see the following example files (available in this repository) and notebooks (links below).
 
-### Files
+**Files**
 
 1. `story_custom_trainer.py`: in this file, we show how to apply our `NetmindMixins` wrapper to a custom training function.
 2. `story_hf_trainer_data_parallel.py`:  in this file we use the `transformers`'s `Trainer` to do the training and use our `NetmindMixins` wrapper to implement data parallelism.
 3. `story_hf_trainer_model_parallel.py`: in this file we use the `transformers`'s `Trainer` to do the training and use our `NetmindMixins` wrapper to implement model parallelism.
 
-### Notebooks
+**Notebooks**
 
 | Type |           Python File Name           | Colab |
 |:---:|:------------------------------------:|:---:|
@@ -161,7 +200,7 @@ Your trained model checkpoints will then become available for you to download fr
 
 ## Example 2: Using HuggingFace `Trainer` Class
 
-### Uploading Datasets and setting training arguments
+### Uploading Datasets and Setting Training Arguments
 In the UI, you will be asked to upload your code and your dataset separately. The dataset upload supports a much larger size limit than the code upload. Both your code and dataset folders should be uploaded as zip files, unless the code consists of a single python file, in which case it can be uploaded directly. If your project has a multi-folder structure, we ask that the "entry file" (the script being run when training your model) be placed into the root folder of the project. This file can then import modules located in other folders as well of course.  
 In your code you will need to define a `ModelTrainingArguments` class which inherits from HuggingFace `transformers.TrainingArguments` class, as shown below.
 ```python
@@ -270,3 +309,25 @@ nmp.finish_training()
 
 Your trained model checkpoints will then become available for you to download from the NetMind Power platform UI once the training is complete.
 
+
+# Import a Training Job from Google Colab
+
+We now also allow you to import a training job directly from Google Colab to the Netmind Power platform. You can do this by following these steps:
+1) Find your training code file on Google Colab
+2) Modify your code by adding the `NetMindMixins` library as explained in [this section](#add-netmindmixins-to-your-training-code).
+3) Share your Google Colab file with NetMind Power. In order to do this, you will need to make your code visible to "Anyone with the link" (see below)
+<p align="center">
+<img src="images/colab_setup1.jpeg" alt="console" style="width:500px;"/>
+</p>  
+NOTE: We are working on a more private solution, which will only ask you to share your training code with our company official account. If you do not wish to do this, you can always upload your training code directly to the platform.  
+
+4) Follow the same steps as in the [Getting Started](#getting-started) section in order to create a new training job. However, when you get to the final interface, under "Training type" you should select "Using Google Colab URL" as shown below.
+<p align="center">
+<img src="images/colab_setup2.png" alt="console" style="width:500px;"/>
+</p>   
+
+5) Under "Training file", simply paste the URL link provided by Google Colab for your notebook
+6) Fill the rest of the fields as required and submit the training job.
+
+NOTE: 
+If you choose to upload your own data locally, you should follow the instructions in the [Uploading Datasets](#uploading-datasets) section and access the data from your code via `training_args.data`.
