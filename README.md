@@ -1,5 +1,5 @@
-# Documentation - Table of Content
-- [Documentation - Table of Content](#documentation---table-of-content)
+# Documentation - Table of Contents
+- [Documentation - Table of Contents](#documentation---table-of-contents)
 - [Getting Started](#getting-started)
 - [Add `NetmindMixins` to your Training Code](#add-netmindmixins-to-your-training-code)
   - [Example 1: Implementing your own Training Loop with PyTorch](#example-1-implementing-your-own-training-loop-with-pytorch)
