@@ -12,7 +12,6 @@
     - [Initialization](#initialization-1)
     - [Training](#training-1)
 - [Import a Training Job from Google Colab](#import-a-training-job-from-google-colab)
-- [Export Trained Models' Checkpoints to Google Colab or any other Machine for Inference](#export-trained-models-checkpoints-to-google-colab-or-any-other-machine-for-inference)
 
 # Getting Started
 
@@ -332,24 +331,3 @@ NOTE: We are working on a more private solution, which will only ask you to shar
 
 NOTE: 
 If you choose to upload your own data locally, you should follow the instructions in the [Uploading Datasets](#uploading-datasets) section and access the data from your code via `training_args.data`.
-
-
-# Export Trained Models' Checkpoints to Google Colab or any other Machine for Inference
-
-After you have trained your model using our Power Platform, if you wish to do inference, you can download your checkpoints on Google Colab, your local machine or any machine with an internet connection. In order to do that please follow the steps below.
-1) On your Workspace, copy the ID of the training job you want to download the checkpoints for. You can do it by clicking on the squared icon below. An example ID would be `2356f5c2-7f25-436f-a4b2-759e9e12a01b`. <p align="center"><img src="images/copy_job_id.png" alt="console" style="width:500px;"/></p>
-2) On your Console, use the left panel to navigate to Token Management and click "Add Token" under "Read permission token" as shown in the picture below. On the field "Way to use" assign a unique name to your token and click Confirm when done. An API key will then be generated, for example `INIYBEXPK68U1CLH`. <p align="center"><img src="images/add_token.png" alt="console" style="width:500px;"/></p>
-3) Open the environment you want to download the checkpoints to. This could be Google Colab, your local machine or any machine with an internet connection. Run the script below and replace your job ID and API key accordingly. Note that this script will install NetmindMixins in your python environment.
-```python
-import os
-os.system("pip install git+https://github.com/protagolabs/NetMind-Mixin-Runtime@py310")
-from NetmindMixins.Netmind import nmp
-
-model_path = nmp.download_checkpoint(
-    job_id="2356f5c2-7f25-436f-a4b2-759e9e12a01b",  # replace with your job ID
-    token="INIYBEXPK68U1CLH"  # replace with your API key
-)
-if not model_path:
-    raise Exception("download failed")
-print(f"Checkpoints successfully downloaded at: {model_path}")
-```
