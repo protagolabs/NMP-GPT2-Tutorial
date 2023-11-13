@@ -12,3 +12,4 @@ huggingface-hub==0.16.4
 sentencepiece
 argparse
 tensorboard
+fsspec==2023.6.0
