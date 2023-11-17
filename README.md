@@ -46,12 +46,10 @@ Our product also supports IDE connection (for example via VSCode).
 NOTES
 - If any failure or technical issue is detected on the server, the machine status on the dashboard might be showing as "Offline". In that case a "restart" button should appear, please restart the machine. If the problem persists, contact our support at [hello@netmind.ai](mailto:hello@netmind.ai).
 - When you request a machine, you will be able to specify a set rental time up to 7 days. We will send you a reminder to renew the lease when you have less than one day remaining. If you do not renew, upon expiry the machine will be made available for anyone to rent and all your data will be permanently and securely removed from the server.
-- It is not possible to retrieve data after the rental is terminated and the machine has been released back to our pool of available servers. We suggest you keep a local backup of any relevant data before terminating the rental. If you're on a Linux or MacOS system, this could be achieved via Secure Copy with the `scp` command. The example below shows how to donwnload the `/data/example.zip` folder from the remote machine to your local machine in the home directory, when run form your local machine. You will need to adjust the port and IP address accordingly. 
+- It is not possible to retrieve data after the rental is terminated and the machine has been released back to our pool of available servers. We suggest you create a local backup of any relevant data before terminating the rental. If you're on a Linux or MacOS system, this could be achieved via Secure Copy with the `scp` command. The example below shows how to donwnload the `/data/example.zip` folder from the remote machine to your local machine in the home directory, when run form your local machine. You will need to adjust the port and IP address accordingly. On Windows, you can use [WinSCP](https://winscp.net/eng/index.php).
 ```bash
 scp -P 10362 root@alb.protago-dev.com:/data/example.zip ~/example.zip
 ```
-On Windows, you can use [WinSCP](https://winscp.net/eng/index.php).
-
 
 
 # Getting Started with the Power Platform
