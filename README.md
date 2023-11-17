@@ -43,6 +43,15 @@ ssh root@alb.protago-dev.com -p 10362
 If you're on Linux os MacOS, you will usually be able to pass this command directly to your terminal in order to connect. For Windows users, you can SSH using the PuTTY software from [this link](https://www.putty.org).   
 Our product also supports IDE connection (for example via VSCode).
 
+NOTES
+- If any failure or technical issue is detected on the server, the machine status on the dashboard might be shown as "Offline". In that case a "re-start" button should appear, please restart the machine. If the problem persists, contact our support at [hello@netmind.ai](mailto:hello@netmind.ai).
+- When you request a machine, you will be able to specify a set rental time up to 7 days. We will send you a reminder you to renew the lease when you have less than one day remaining. If you do not renew, the lease will expire and all data will be permanently removed from the server.
+- It is not possible to retrieve data after the rental is terminated and the machine has been released back to our pool of available servers. We suggest you keep a local backup of any relevant data before terminating the rental. If you're on a Linux or MacOS system, this could be achieved via Secure Copy with the `scp` command. The example below shows how to donwnload the `/data/example.zip` folder from the remove machine to your local machine in the home directory, when run form your local machine. You will need to adjust the poet and address name accordingly
+```bash
+scp -P 10362 root@alb.protago-dev.com:/data/example.zip ~/example.zip
+```
+On Windows, you can use [WinSCP](https://winscp.net/eng/index.php).
+
 
 # Getting Started with the Power Platform
 
