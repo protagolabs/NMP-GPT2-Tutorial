@@ -18,7 +18,7 @@
 
 # Sign Up Process
 
-In order to use any NetMind services, you need to [create an account](https://power.netmind.ai/sign/login) first. You can register with your Google or Microsoft account, or with any email address. After login, click on the icon on the top right of the screen and select "Console" from the dropdown menu (see image below).   
+In order to use any NetMind service, you need to [create an account](https://power.netmind.ai/sign/login) first. You can register with your Google or Microsoft account, or with any email address. After login, click on the icon on the top right of the screen and select "Console" from the dropdown menu (see image below).   
 <p align="center">
 <img src="images/console.png" style="width:500px;"/>
 </p>
@@ -30,7 +30,7 @@ You will be directed to your personal page.
 Follow these steps to rent a server with GPUs.
 After signing in, select "Console" from the dropdown menu. You will be directed to your personal page. Select "Rent GPU" from the dropdown on the left, and then click on "Rent new machine".  
 Fill in the form which will appear. At the end you will be asked to choose a password which you will use to SSH. Click "Rent machine" once the form is complete.
-You should now see a dashboard with your newly rented machine. If you do not see the IP Address and Port, you may need to manually refresh the browser page. You can click on "Copy SSH command" as shown in the image below
+You should now see a dashboard with your newly rented machine. If you do not see the IP Address and Port, you may need to manually refresh the browser page. You can copy the SSH command by clicking on the button as shown below.
 <p align="center">
 <img src="images/vm_dashboard.png" style="width:500px;"/>
 </p>
@@ -40,8 +40,8 @@ The command will look like this
 ssh root@alb.protago-dev.com -p 10362
 ```
 
-You will then be able to pass this command to your terminal in order to connect. Our product also supports IDE connection (for example via VSCode).
-For Windows users, you can SSH using the PuTTY software from [this link](https://www.putty.org).
+If you're on Linux os MacOS, you will usually be able to pass this command directly to your terminal in order to connect. For Windows users, you can SSH using the PuTTY software from [this link](https://www.putty.org).   
+Our product also supports IDE connection (for example via VSCode).
 
 
 # Getting Started with the Power Platform
