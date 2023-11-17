@@ -1,6 +1,8 @@
 # Documentation - Table of Contents
 - [Documentation - Table of Contents](#documentation---table-of-contents)
-- [Getting Started](#getting-started)
+- [Sign Up Process](#sign-up-process)
+- [Getting Started with SSH](#getting-started-with-ssh)
+- [Getting Started with the Power Platform](#getting-started-with-the-power-platform)
 - [Add `NetmindMixins` to your Training Code](#add-netmindmixins-to-your-training-code)
   - [Example 1: Implementing your own Training Loop with PyTorch](#example-1-implementing-your-own-training-loop-with-pytorch)
     - [Uploading Datasets](#uploading-datasets)
@@ -14,24 +16,47 @@
 - [Import a Training Job from Google Colab](#import-a-training-job-from-google-colab)
 - [Export Trained Models' Checkpoints to Google Colab or any other Machine for Inference](#export-trained-models-checkpoints-to-google-colab-or-any-other-machine-for-inference)
 
-# Getting Started
+# Sign Up Process
 
-In order to create a training job on the Netmind Power platform, you need to [create an account](https://power.netmind.ai/sign/login) first. You can register with your Google or Microsoft account, or with any email address. After login, click on the icon on the top right of the screen and select "Console" from the dropdown menu (see image below).   
+In order to use any NetMind services, you need to [create an account](https://power.netmind.ai/sign/login) first. You can register with your Google or Microsoft account, or with any email address. After login, click on the icon on the top right of the screen and select "Console" from the dropdown menu (see image below).   
 <p align="center">
-<img src="images/console.png" alt="console" style="width:500px;"/>
+<img src="images/console.png" style="width:500px;"/>
 </p>
 
-You will be directed to your personal page. Select "Workspaces" from the dropdown on the left, and then select "create a new workspace", assign your workspace a name and press "Confirm". A workspace should now appear under your Workspaces. For example, a workspace named "test" will look like this. 
+You will be directed to your personal page.
+
+# Getting Started with SSH
+
+Follow these steps to rent a server with GPUs.
+After signing in, select "Console" from the dropdown menu. You will be directed to your personal page. Select "Rent GPU" from the dropdown on the left, and then click on "Rent new machine".  
+Fill in the form which will appear. At the end you will be asked to choose a password which you will use to SSH. Click "Rent machine" once the form is complete.
+You should now see a dashboard with your newly rented machine. If you do not see the IP Address and Port, you may need to manually refresh the browser page. You can click on "Copy SSH command" as shown in the image below
 <p align="center">
-<img src="images/test.png" alt="training_job" style="width:500px;"/>
+<img src="images/vm_dashboard.png" style="width:500px;"/>
+</p>
+The command will look like this   
+
+```bash
+ssh root@alb.protago-dev.com -p 10362
+```
+
+You will then be able to pass this command to your terminal in order to connect. Our product also supports IDE connection (for example via VSCode).
+For Windows users, you can SSH using the PuTTY software from [this link](https://www.putty.org).
+
+
+# Getting Started with the Power Platform
+
+After signing in, select "Console" from the dropdown menu. You will be directed to your personal page. Select "Workspaces" from the dropdown on the left, and then select "create a new workspace", assign your workspace a name and press "Confirm". A workspace should now appear under your Workspaces. For example, a workspace named "test" will look like this. 
+<p align="center">
+<img src="images/test.png" style="width:500px;"/>
 </p>
 Click on your workspace box and then click on "Create Training job", as shown below.
 <p align="center">
-<img src="images/training_job.png" alt="training_job" style="width:500px;"/>
+<img src="images/training_job.png" style="width:500px;"/>
 </p>
 You should then see the following page.  
 <p align="center">
-<img src="images/training_edit.png" alt="training_job" style="width:500px;"/>
+<img src="images/training_edit.png" style="width:500px;"/>
 </p>
 
 Assign your training job a name and fill in the fields as required. You will need to upload your training code and data, if applicable. In order for your code to train successfully on our platform, you need to make some minor modifications to your codebase by adding the `NetmindMixins` library. The required modifications depend on whether you're implementing a custom training loop or using HuggingFace `Trainer` class. Details are given in the [section below](#add-netmindmixins-to-your-training-code).  
@@ -318,13 +343,13 @@ We now also allow you to import a training job directly from Google Colab to the
 2) Modify your code by adding the `NetMindMixins` library as explained in [this section](#add-netmindmixins-to-your-training-code).
 3) Share your Google Colab file with NetMind Power. In order to do this, you will need to make your code visible to "Anyone with the link" (see below)
 <p align="center">
-<img src="images/colab_setup1.jpeg" alt="console" style="width:500px;"/>
+<img src="images/colab_setup1.jpeg" style="width:500px;"/>
 </p>  
 NOTE: We are working on a more private solution, which will only ask you to share your training code with our company official account. If you do not wish to do this, you can always upload your training code directly to the platform.  
 
 4) Follow the same steps as in the [Getting Started](#getting-started) section in order to create a new training job. However, when you get to the final interface, under "Training type" you should select "Using Google Colab URL" as shown below.
 <p align="center">
-<img src="images/colab_setup2.png" alt="console" style="width:500px;"/>
+<img src="images/colab_setup2.png" style="width:500px;"/>
 </p>   
 
 5) Under "Training file", simply paste the URL link provided by Google Colab for your notebook
@@ -337,8 +362,8 @@ If you choose to upload your own data locally, you should follow the instruction
 # Export Trained Models' Checkpoints to Google Colab or any other Machine for Inference
 
 After you have trained your model using our Power Platform, if you wish to do inference, you can download your checkpoints on Google Colab, your local machine or any machine with an internet connection. In order to do that please follow the steps below.
-1) On your Workspace, copy the ID of the training job you want to download the checkpoints for. You can do it by clicking on the squared icon below. An example ID would be `2356f5c2-7f25-436f-a4b2-759e9e12a01b`. <p align="center"><img src="images/copy_job_id.png" alt="console" style="width:500px;"/></p>
-2) On your Console, use the left panel to navigate to the "API keys" tab and then click on "Create new API Key". On the field "Name" assign a unique name to your key and click "Create secret key" when done. An API key will then be generated, for example `INIYBEXPK68U1CLH`. <p align="center"><img src="images/add_token.png" alt="console" style="width:500px;"/></p>
+1) On your Workspace, copy the ID of the training job you want to download the checkpoints for. You can do it by clicking on the squared icon below. An example ID would be `2356f5c2-7f25-436f-a4b2-759e9e12a01b`. <p align="center"><img src="images/copy_job_id.png" style="width:500px;"/></p>
+2) On your Console, use the left panel to navigate to the "API keys" tab and then click on "Create new API Key". On the field "Name" assign a unique name to your key and click "Create secret key" when done. An API key will then be generated, for example `INIYBEXPK68U1CLH`. <p align="center"><img src="images/add_token.png" style="width:500px;"/></p>
 3) Open the environment you want to download the checkpoints to. This could be Google Colab, your local machine or any machine with an internet connection. Run the script below and replace your job ID and API key accordingly. Note that this script will install NetmindMixins in your python environment.
 ```python
 import os
