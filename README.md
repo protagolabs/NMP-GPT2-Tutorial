@@ -15,6 +15,7 @@
     - [Training](#training-1)
 - [Import a Training Job from Google Colab](#import-a-training-job-from-google-colab)
 - [Export Trained Models' Checkpoints to Google Colab or any other Machine for Inference](#export-trained-models-checkpoints-to-google-colab-or-any-other-machine-for-inference)
+- [Binding you MetaMask Wallet to your NetMind Account](#binding-you-metamask-wallet-to-your-netmind-account)
 
 # Sign Up Process
 
@@ -386,3 +387,18 @@ if not model_path:
     raise Exception("download failed")
 print(f"Checkpoints successfully downloaded at: {model_path}")
 ```
+
+# Binding you MetaMask Wallet to your NetMind Account
+
+If you wish to volunteer computing power to the NetMind Power platform by connecting your idle GPUs to the network, you will receive rewards in the form of NMT (NetMind Token), the native utility token of the NetMind Chain. More details are
+provided in sections 6 and 7 of our [White Paper](https://netmind.gitbook.io/white-paper/). In order to enable us to send you your rewards, you will need to create a MetaMask wallet and bind it to your NetMind Power account.  
+MetaMask is an online Cryptocurrency wallet that allows you to store tokens (in this case NMT) securely; it provides a browser extension that allows you to easily access your wallet and tokens directly within the browser. The supported browsers are Chrome, Firefox, Brave, Edge, Opera. To download the suitable extension for your specific browser, visit [this page](https://metamask.io/download/) and select your browser of choice.  
+After you have created a MetaMask account and wallet, follow the steps below to bind it to your NetMind Power account. 
+
+1. Login to the NetMind Power account (see [here](#sign-up-process) for sign-up instructions) 
+2. Select "Account" from the dropdown menu (see image below). <p align="center"><img src="images/account_position.png" style="width:500px;"/></p> 
+3. Click “Bind wallet” and follow the instructions to bind the wallet (see image below). Make sure your MetaMask wallet is already connected to the browser you're using to login to NetMind Power, otherwise this will not work. <p align="center"><img src="images/blockchain_wallet.png" style="width:500px;"/></p> 
+4. A pop-up should appear, and your wallet number should be automatically recognised. Check that the wallet address is correct and click "OK" (image below on the left). If for some reason this doesn't happen, enter your wallet address manually in the box which will appear (image below on the right) <p align="center"><img src="images/link_wallet.png" style="width:500px;"/></p> 
+NOTE: Make sure the wallet address you bound to your NetMind Power account is the same as the wallet address shown on your MetaMask plugin (the two boxes in red in the image below should show the same number). <p align="center"><img src="images/check_wallet.png" style="width:500px;"/></p> 
+
+NOTE: You can only bind one wallet address to each NetMind Power account. You cannot undo this action and you cannot bind a different wallet to the same NetMind Power account. If you need to change MetaMask wallet, please create a new NetMind Power account and bind it to your new wallet.
